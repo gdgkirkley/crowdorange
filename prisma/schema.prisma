@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model List {
+  id    Int     @default(autoincrement()) @id
+  name  String
+  user User @relation(fields: [userId], references: [id])  
+  userId Int  
+  listItems ListItem[]
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+}
+
+model ListItem {
+  id  Int @default(autoincrement()) @id
+  notes String?
+  list List @relation(fields: [listId], references: [id])
+  listId Int
+  productId Int
+}
+
+model Price {
+  id  Int @default(autoincrement()) @id
+  bought Boolean
+  price Decimal
+  submittedUserName String
+  timestamp DateTime @default(now())
+  weight Decimal
+  weightUnit String
+  product Product? @relation(fields: [productId], references: [id])
+  productId Int?
+}
+
+model Product {
+  id  Int @default(autoincrement()) @id
+  name String
+  brand String
+  packaged Boolean
+  upc12 String
+  upc14 String?
+  prices Price[]
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+}
+
+model Store {
+    id  Int @default(autoincrement()) @id
+    name String
+    address String
+    city  String
+    country String
+    postalCode String
+    latitude Decimal?
+    longitude Decimal?
+}
+
+model User {
+  id  Int @default(autoincrement()) @id
+  username String
+  email String
+  password String
+  salt String
+  loginToken String?
+  latitude Decimal?
+  longitude Decimal?
+  lists List[]
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+}
