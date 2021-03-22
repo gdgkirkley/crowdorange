@@ -10,20 +10,24 @@ interface UserInfo {
   id: number;
   username: string;
   email: string;
+  latitude: number | null;
+  longitude: number | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 router.post(
   "/login",
   asyncHandler(async (req, res) => {
-    const { username, email, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username && !email) {
-      throw new Error("Invalid request: must include username or email");
+    if (!email) {
+      throw new Error("Invalid request: must include email");
     }
 
     const user = await prisma.user.findFirst({
       where: {
-        OR: [{ email }, { username }],
+        email,
       },
     });
 
@@ -37,15 +41,19 @@ router.post(
       throw new Error("Wrong password");
     }
 
-    const token = getUserToken(user);
+    const token = await getUserToken(user);
 
     const publicUser: UserInfo = {
       id: user.id,
       email: user.email,
       username: user.username,
+      latitude: Number(user.latitude),
+      longitude: Number(user.longitude),
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
 
-    res.json({ token, publicUser });
+    res.json({ token, user: publicUser });
   })
 );
 
@@ -104,9 +112,13 @@ router.post(
       id: user.id,
       email: user.email,
       username: user.username,
+      latitude: Number(user.latitude),
+      longitude: Number(user.longitude),
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
 
-    res.json({ token, publicUser });
+    res.json({ token, user: publicUser });
   })
 );
 
