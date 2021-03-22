@@ -17,6 +17,7 @@
   "author": "Gabe Kirkley",
   "license": "ISC",
   "dependencies": {
+    "@babel/runtime": "^7.13.10",
     "@prisma/client": "^2.18.0",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
@@ -30,7 +31,7 @@
     "@babel/cli": "^7.13.0",
     "@babel/core": "^7.13.8",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/plugin-transform-runtime": "^7.13.9",
+    "@babel/plugin-transform-runtime": "^7.13.10",
     "@babel/preset-env": "^7.13.9",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/register": "^7.13.8",
