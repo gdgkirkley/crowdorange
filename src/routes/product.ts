@@ -1,36 +1,47 @@
-import express from 'express'
-import asyncHandler from 'express-async-handler'
-import prisma from '../db'
+import express from "express";
+import asyncHandler from "express-async-handler";
+import prisma from "../db";
 
-const router = express.Router()
+const router = express.Router();
 
 router.get(
-  '/',
+  "/",
   asyncHandler(async (req, res) => {
-    const {limit, offset} = req.query
+    const { limit, offset } = req.query;
 
     const products = await prisma.product.findMany({
       take: limit ? Number(limit) : 10,
       skip: offset ? Number(offset) : 0,
-    })
+      include: {
+        prices: {
+          orderBy: [{ timestamp: "desc" }],
+        },
+      },
+    });
 
-    res.json({total: products.length, products})
-  }),
-)
+    const total = await prisma.product.aggregate({
+      count: {
+        id: true,
+      },
+    });
+
+    res.json({ total: total.count.id, products });
+  })
+);
 
 router.get(
-  '/:id',
+  "/:id",
   asyncHandler(async (req, res) => {
-    const {id} = req.params
+    const { id } = req.params;
 
     const product = await prisma.product.findFirst({
       where: {
         id: Number(id),
       },
-    })
+    });
 
-    return res.json({product})
-  }),
-)
+    return res.json({ product });
+  })
+);
 
-export default router
+export default router;
