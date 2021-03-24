@@ -1,20 +1,20 @@
-import jwt from 'jsonwebtoken'
-import expressJWT from 'express-jwt'
+import jwt from "jsonwebtoken";
+import expressJWT from "express-jwt";
 
-const SIXTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 60
+const SIXTY_DAYS_IN_SECONDS = 60 * 60 * 24 * 60;
 
-const secret = process.env.APP_SECRET
+const secret = process.env.APP_SECRET;
 
 interface getUserTokenProps {
-  id: number
-  username: string
+  id: number;
+  username: string;
 }
 
 async function getUserToken({
   id,
   username,
 }: getUserTokenProps): Promise<string> {
-  const issuedAt = Math.floor(Date.now() / 1000)
+  const issuedAt = Math.floor(Date.now() / 1000);
 
   return jwt.sign(
     {
@@ -23,20 +23,20 @@ async function getUserToken({
       iat: issuedAt,
       exp: issuedAt + SIXTY_DAYS_IN_SECONDS,
     },
-    secret,
-  )
+    secret
+  );
 }
 
 const authMiddleware = expressJWT({
   secret,
-  algorithms: ['HS256'],
+  algorithms: ["HS256"],
   credentialsRequired: false,
-  getToken: function fromCookie(req) {
-    if (req.cookies && req.cookies.token) {
-      return req.cookies.token
-    }
-    return null
-  },
-})
+  // getToken: function fromCookie(req) {
+  //   if (req.cookies && req.cookies.token) {
+  //     return req.cookies.token
+  //   }
+  //   return null
+  // },
+});
 
-export {getUserToken, authMiddleware}
+export { getUserToken, authMiddleware };

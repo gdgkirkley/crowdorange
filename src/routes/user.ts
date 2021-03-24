@@ -122,6 +122,48 @@ router.post(
   })
 );
 
+router.post(
+  "/:id/reset",
+  isAuthenticated,
+  isReadingOwnUser,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      throw new Error("Invalid request");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!user) {
+      throw new Error("No user found");
+    }
+
+    const isValid = isPasswordValid(oldPassword, user.salt, user.password);
+
+    if (!isValid) {
+      throw new Error("Wrong password");
+    }
+
+    const hash = getSaltAndHash(newPassword);
+
+    await prisma.user.update({
+      data: {
+        password: hash.hash,
+        salt: hash.salt,
+      },
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return res.json({ message: "Password updated successfully!" });
+  })
+);
+
 router.put(
   "/:id",
   isAuthenticated,
