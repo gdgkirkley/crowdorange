@@ -8,6 +8,7 @@ import {
   priceRoutes,
   listRoutes,
   listItemRoutes,
+  storeRoutes,
 } from "./routes";
 
 export async function startServer({
@@ -28,6 +29,7 @@ export async function startServer({
   app.use("/price", priceRoutes);
   app.use("/list", listRoutes);
   app.use("/listitem", listItemRoutes);
+  app.use("/store", storeRoutes);
 
   app.use(errorMiddleware);
 

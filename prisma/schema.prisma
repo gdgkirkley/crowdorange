@@ -38,6 +38,8 @@ model Price {
   weightUnit String
   product Product? @relation(fields: [productId], references: [id])
   productId Int?
+  store Store? @relation(fields: [storeId], references: [id])
+  storeId Int?
 }
 
 model Product {
@@ -61,6 +63,7 @@ model Store {
     postalCode String
     latitude Decimal?
     longitude Decimal?
+    prices Price[]
 }
 
 model User {
