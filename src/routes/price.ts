@@ -1,17 +1,17 @@
-import express from 'express'
-import asyncHandler from 'express-async-handler'
-import prisma from '../db'
-import {isAuthenticated} from '../middleware'
+import express from "express";
+import asyncHandler from "express-async-handler";
+import prisma from "../db";
+import { isAuthenticated } from "../middleware";
 
-const router = express.Router()
+const router = express.Router();
 
 router.get(
-  '/',
+  "/",
   asyncHandler(async (req, res) => {
-    const {productId} = req.query
+    const { productId } = req.query;
 
     if (!productId) {
-      throw new Error('Must include product id query')
+      throw new Error("Must include product id query");
     }
 
     const prices = await prisma.price.findMany({
@@ -19,24 +19,24 @@ router.get(
         productId: Number(productId),
       },
       orderBy: {
-        timestamp: 'desc',
+        timestamp: "desc",
       },
       take: 5,
-    })
+    });
 
-    return res.json(prices)
-  }),
-)
+    return res.json(prices);
+  })
+);
 
 router.post(
-  '/',
+  "/",
   isAuthenticated,
   asyncHandler(async (req, res) => {
-    const {bought, price, weight, weightUnit, productId} = req.body
-    const user = req.user
+    const { bought, price, weight, weightUnit, productId, storeId } = req.body;
+    const user = req.user;
 
-    if (!price || !productId) {
-      throw new Error('Invalid submission')
+    if (!price || !productId || !storeId) {
+      throw new Error("Invalid submission");
     }
 
     const newPrice = await prisma.price.create({
@@ -45,29 +45,30 @@ router.post(
         price,
         weight,
         weightUnit,
-        submittedUserName: user?.username ? user.username : '',
+        submittedUserName: user?.username ? user.username : "",
         productId: Number(productId),
+        storeId: Number(storeId),
       },
-    })
+    });
 
-    res.json(newPrice)
-  }),
-)
+    return res.json({ price: newPrice });
+  })
+);
 
 router.delete(
-  '/:id',
+  "/:id",
   isAuthenticated,
   asyncHandler(async (req, res) => {
-    const {id} = req.params
+    const { id } = req.params;
 
     await prisma.price.delete({
       where: {
         id: Number(id),
       },
-    })
+    });
 
-    res.json({message: 'Price deleted'})
-  }),
-)
+    res.json({ message: "Price deleted" });
+  })
+);
 
-export default router
+export default router;

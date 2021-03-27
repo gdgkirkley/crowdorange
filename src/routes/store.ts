@@ -32,4 +32,45 @@ router.get(
   })
 );
 
+router.post(
+  "/",
+  asyncHandler(async (req, res) => {
+    const {
+      name,
+      address,
+      city,
+      country,
+      postalCode,
+      latitude,
+      longitude,
+    } = req.body;
+
+    if (
+      !name ||
+      !address ||
+      !city ||
+      !country ||
+      !postalCode ||
+      !latitude ||
+      !longitude
+    ) {
+      throw new Error("Invalid submission");
+    }
+
+    const store = await prisma.store.create({
+      data: {
+        name,
+        address,
+        city,
+        country,
+        postalCode,
+        latitude,
+        longitude,
+      },
+    });
+
+    return res.json({ store });
+  })
+);
+
 export default router;

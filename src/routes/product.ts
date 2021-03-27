@@ -7,23 +7,56 @@ const router = express.Router();
 router.get(
   "/",
   asyncHandler(async (req, res) => {
-    const { limit, offset } = req.query;
+    const { term, limit, offset } = req.query;
 
-    const products = await prisma.product.findMany({
-      take: limit ? Number(limit) : 10,
-      skip: offset ? Number(offset) : 0,
-      include: {
-        prices: {
-          orderBy: [{ timestamp: "desc" }],
+    let products;
+    let total;
+
+    if (term) {
+      products = await prisma.product.findMany({
+        where: {
+          name: {
+            contains: String(term),
+            mode: "insensitive",
+          },
         },
-      },
-    });
+        take: limit ? Number(limit) : 10,
+        skip: offset ? Number(offset) : 0,
+        include: {
+          prices: {
+            orderBy: [{ timestamp: "desc" }],
+          },
+        },
+      });
 
-    const total = await prisma.product.aggregate({
-      count: {
-        id: true,
-      },
-    });
+      total = await prisma.product.aggregate({
+        where: {
+          name: {
+            contains: String(term),
+            mode: "insensitive",
+          },
+        },
+        count: {
+          id: true,
+        },
+      });
+    } else {
+      products = await prisma.product.findMany({
+        take: limit ? Number(limit) : 10,
+        skip: offset ? Number(offset) : 0,
+        include: {
+          prices: {
+            orderBy: [{ timestamp: "desc" }],
+          },
+        },
+      });
+
+      total = await prisma.product.aggregate({
+        count: {
+          id: true,
+        },
+      });
+    }
 
     res.json({ total: total.count.id, products });
   })
