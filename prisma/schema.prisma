@@ -23,7 +23,7 @@ model List {
 
 model ListItem {
   id  Int @default(autoincrement()) @id
-  notes String?
+  notes String? @default("")
   list List @relation(fields: [listId], references: [id])
   listId Int
   productId Int
@@ -51,6 +51,7 @@ model Product {
   upc12 String
   upc14 String?
   prices Price[]
+  lastPriceUpdate DateTime? 
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
 }

@@ -10,7 +10,7 @@ interface ListWithProduct extends List {
   listItems: ListItemWithProduct[];
 }
 
-interface ListItemWithProduct extends ListItem {
+export interface ListItemWithProduct extends ListItem {
   product?: Product;
 }
 

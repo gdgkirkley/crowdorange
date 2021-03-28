@@ -42,13 +42,16 @@ router.get(
       });
     } else {
       products = await prisma.product.findMany({
-        take: limit ? Number(limit) : 10,
+        take: limit ? Number(limit) : 20,
         skip: offset ? Number(offset) : 0,
         include: {
           prices: {
             take: 1,
-            orderBy: [{ timestamp: "desc" }],
+            orderBy: [{ timestamp: "asc" }],
           },
+        },
+        orderBy: {
+          lastPriceUpdate: "asc",
         },
       });
 

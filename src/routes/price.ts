@@ -21,10 +21,13 @@ router.get(
       orderBy: {
         timestamp: "desc",
       },
-      take: 5,
+      take: 10,
+      include: {
+        store: true,
+      },
     });
 
-    return res.json(prices);
+    return res.json({ prices });
   })
 );
 
@@ -48,6 +51,15 @@ router.post(
         submittedUserName: user?.username ? user.username : "",
         productId: Number(productId),
         storeId: Number(storeId),
+      },
+    });
+
+    await prisma.product.update({
+      where: {
+        id: Number(productId),
+      },
+      data: {
+        lastPriceUpdate: new Date(),
       },
     });
 
