@@ -106,7 +106,7 @@ router.post(
       },
     });
 
-    const token = getUserToken(user);
+    const token = await getUserToken(user);
 
     const publicUser: UserInfo = {
       id: user.id,
