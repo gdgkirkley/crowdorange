@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build:js",
+    "build": "npm run build:prisma && npm run build:js",
+    "build:prisma": "npx prisma migrate",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
     "build:install": "npm install"
