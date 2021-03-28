@@ -46,6 +46,7 @@ router.get(
         skip: offset ? Number(offset) : 0,
         include: {
           prices: {
+            take: 1,
             orderBy: [{ timestamp: "desc" }],
           },
         },
@@ -70,6 +71,9 @@ router.get(
     const product = await prisma.product.findFirst({
       where: {
         id: Number(id),
+      },
+      include: {
+        prices: true,
       },
     });
 
